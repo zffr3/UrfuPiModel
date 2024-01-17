@@ -1,12 +1,15 @@
 import json
-import requests
 
-URL = 'http://127.0.0.1:8000'
+from fastapi.testclient import TestClient
+from Task2.main import app
 
-testData = {"привет":"NEUTRAL", "мне хорошо":"POSITIVE", "сегодня плохая погода":"NEGATIVE"}
+client = TestClient(app)
+
 
 def test_model():
+    testData = {"привет":"NEUTRAL", "мне хорошо":"POSITIVE", "сегодня плохая погода":"NEGATIVE"}
     for key, value in testData.Items():
-        response = requests.get(f"{URL}/nlp/{key}")
-        assert requests.status_code == 200
-        assert requests.json()["label"] == value
+        url = "/nlp/"
+        response = client.get(url, key)
+        assert response.status_code == 200
+        assert response.json()["label"] == value
